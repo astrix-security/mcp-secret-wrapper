@@ -1,5 +1,5 @@
 {
-  "name": "mcp-secret-wrapper",
+  "name": "@astrixsecurity/mcp-secret-wrapper",
   "version": "0.0.0",
   "description": "MCP Server Secret Wrapper based on Vaults",
   "main": "dist/index.js",
