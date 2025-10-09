@@ -1,6 +1,6 @@
 {
   "name": "mcp-secret-wrapper",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "description": "MCP Server Secret Wrapper based on Vaults",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
