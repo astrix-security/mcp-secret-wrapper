@@ -53,7 +53,7 @@ Convert any MCP Server configured for your client and uses a static secret in 2 
       "command": "npx",
       "args": [
         "-y",
-        "git+https://github.com/astrix-security/mcp-secret-wrapper", // TODO - Change
+        "git+https://github.com/astrix-security/mcp-secret-wrapper",
         "--vault-type=aws",
         "GITHUB_PERSONAL_ACCESS_TOKEN=arn:aws:secretsmanager:us-east-1:123456789012:secret:example-ABCDE",
         "--",
@@ -83,9 +83,9 @@ Convert any MCP Server configured for your client and uses a static secret in 2 
 | Vault Type | Status | Description |
 |------------|--------|-------------|
 | AWS Secrets Manager | ✅ Supported | Full support for AWS Secrets Manager with IAM authentication |
-| HashiCorp Vault | 🚧 Planned | Support for HashiCorp Vault |
-| Azure Key Vault | 🚧 Planned | Support for Azure Key Vault |
-| Google Secret Manager | 🚧 Planned | Support for Google Secret Manager |
+| HashiCorp Vault | 🚧 In-Progress | Support for HashiCorp Vault |
+| Azure Key Vault | 🚧 In-Progress | Support for Azure Key Vault |
+| Google Secret Manager | 🚧 In-Progress | Support for Google Secret Manager |
 
 **📚 Detailed Documentation:** [Vault Specific Guides](./docs)
 
