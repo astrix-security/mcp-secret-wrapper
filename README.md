@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://example.com" alt="MCP Secret Wrapper Logo CHANGE" width="200"/>
+  <!-- <img src="https://example.com" alt="MCP Secret Wrapper Logo" width="200"/> -->
   
   [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
   [![Build Status](https://img.shields.io/github/actions/workflow/status/astrix-security/mcp-secret-wrapper/ci.yml?branch=main)](https://github.com/astrix-security/mcp-secret-wrapper/actions)
