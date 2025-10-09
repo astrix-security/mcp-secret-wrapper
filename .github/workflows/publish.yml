@@ -4,9 +4,6 @@ on:
   release:
     types: [published]
 
-permissions:
-  id-token: write # Required for OIDC
-  contents: read
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -35,3 +32,5 @@ jobs:
 
       - name: Publish to npm
         run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
