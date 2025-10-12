@@ -1,6 +1,4 @@
 <div align="center">
-  <!-- <img src="https://example.com" alt="MCP Secret Wrapper Logo" width="200"/> -->
-  
   [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
   [![Build Status](https://img.shields.io/github/actions/workflow/status/astrix-security/mcp-secret-wrapper/ci.yml?branch=main)](https://github.com/astrix-security/mcp-secret-wrapper/actions)
 </div>
@@ -25,7 +23,7 @@ Convert any MCP Server configured for your client and uses a static secret in 2 
 ```json
 {
   "mcpServers": {
-    "notionApi": {
+    "githubApi": {
       "command": "docker",
       "args":
       [
@@ -49,7 +47,7 @@ Convert any MCP Server configured for your client and uses a static secret in 2 
 ```json
 {
   "mcpServers": {
-    "notionApi": {
+    "githubApi": {
       "command": "npx",
       "args": [
         "-y",
@@ -147,6 +145,6 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](./LICE
   <p>
     <a href="https://astrix.security">Website</a> •
     <a href="https://astrix.security/blog">Blog</a> •
-    <a href="https://github.com/astrix-security/mcp-secret-wrapper/issues">Issues</a> 
+    <a href="https://github.com/astrix-security/mcp-secret-wrapper/issues">Issues</a>
   </p>
 </div>
