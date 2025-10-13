@@ -67,6 +67,8 @@ Convert any MCP Server configured for your client and uses a static secret in 2 
 }
 ```
 
+https://github.com/user-attachments/assets/9af6e6b3-3694-49de-b107-8749e0630db3
+
 **See what's going on behind-the-scenes by using our example MCP server:** [Example MCP Server](./example/README.md)
 
 ## Support
