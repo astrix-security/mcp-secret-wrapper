@@ -5,6 +5,17 @@
 
 </div>
 
+<div align="center">
+
+<video width="800" controls>
+  <source src="https://github.com/astrix-security/mcp-secret-wrapper/assets/MCP_Secret_Wrapper_Video.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+_Watch MCP Secret Wrapper in action_
+
+</div>
+
 Securely inject secrets from vault systems into MCP (Model Context Protocol) servers without exposing credentials in configuration files.
 
 ## Usage
