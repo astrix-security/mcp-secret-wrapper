@@ -61,6 +61,8 @@ aws secretsmanager create-secret \
 
 #### Step 2: Configure MCP Server
 
+**Passing the environment variables via CLI args**
+
 ```json
 {
   "mcpServers": {
@@ -75,6 +77,29 @@ aws secretsmanager create-secret \
         "node",
         "/path/to/example/dist/mcp-server.js"
       ]
+    }
+  }
+}
+```
+
+**Passing the environment variables via the `env` section of the MCP config**
+
+```json
+{
+  "mcpServers": {
+    "example-server-secure": {
+      "command": "npx",
+      "args": [
+        "git+https://github.com/astrix-security/mcp-secret-wrapper",
+        "API_KEY=arn:aws:secretsmanager:us-east-1:123456789012:secret:example-mcp/api-key",
+        "--",
+        "node",
+        "/path/to/example/dist/mcp-server.js"
+      ],
+      "env": {
+        "VAULT_TYPE": "aws",
+        "VAULT_REGION": "us-east-1"
+      }
     }
   }
 }

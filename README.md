@@ -14,9 +14,9 @@ Convert any MCP Server configured for your client and uses a static secret in 2 
 1. Add the secret to one of the [supported vaults](#support)
 2. Replace the server's settings in the configuration file to use MCP Secret Wrapper:
    - Run MCP Secret Wrapper with `npx`
-   - Pass any environment variables that should be inject. Their value is the secret location
+   - Pass any environment variables that should be injected. Their value is the secret location.
    - Place the separator (`--`) followed by the previous command and all its arguments
-   - Add the required `VAULT_TYPE` environment variable and any additional optional environment variables
+   - Add the required `VAULT_TYPE` environment variable and any additional optional environment variables either in the `env` section or as CLI arguments (`--vault-type`). You can find examples of both usages in our [Example MCP Server](./example/README.md)
 
 ### Example Usage - GitHub MCP with AWS Secret Manager
 
@@ -27,7 +27,14 @@ Convert any MCP Server configured for your client and uses a static secret in 2 
   "mcpServers": {
     "githubApi": {
       "command": "docker",
-      "args": ["run", "-i", "--rm", "-e", "GITHUB_PERSONAL_ACCESS_TOKEN", "ghcr.io/github/github-mcp-server"],
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "GITHUB_PERSONAL_ACCESS_TOKEN",
+        "ghcr.io/github/github-mcp-server"
+      ],
       "env": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": "github_pat_EXAMPLE"
       }
@@ -46,7 +53,6 @@ Convert any MCP Server configured for your client and uses a static secret in 2 
       "args": [
         "-y",
         "git+https://github.com/astrix-security/mcp-secret-wrapper",
-        "--vault-type=aws",
         "GITHUB_PERSONAL_ACCESS_TOKEN=arn:aws:secretsmanager:us-east-1:123456789012:secret:example-ABCDE",
         "--",
         "docker",
