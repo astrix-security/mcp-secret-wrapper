@@ -121,7 +121,7 @@ export interface YourVaultConfig {
 }
 
 export class YourVaultPlugin implements VaultPlugin {
-  readonly name = "your-vault";
+  readonly name = "your-vault-name";
   readonly version = "1.0.0";
   readonly description = "Your vault implementation";
   readonly requiredParams: string[] = [];
