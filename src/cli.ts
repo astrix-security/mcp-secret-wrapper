@@ -82,6 +82,69 @@ function runMcpServer(
 }
 
 /**
+ * Extract a value from a JSON string using dot-notation path
+ * @param jsonString The JSON string to parse
+ * @param jsonPath Dot-notation path (e.g., "credentials.password")
+ * @returns The extracted value as a string
+ * @throws Error if JSON is invalid, path doesn't exist, or value is not a primitive
+ */
+function extractJsonPath(jsonString: string, jsonPath: string): string {
+  // 1. Try to parse as JSON
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(jsonString);
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      // The user requested JSON path extraction (by including #), but secret isn't JSON
+      throw new Error(
+        `Cannot extract JSON path '${jsonPath}' from secret: secret value is not valid JSON. ` +
+        `If you did not intend to extract a JSON path, remove the '#${jsonPath}' suffix from the secret ID.`
+      );
+    }
+    throw error;
+  }
+
+  // 2. Validate it's an object (not a primitive JSON value like string, number, boolean)
+  if (typeof parsed !== 'object' || parsed === null) {
+    throw new Error(
+      `Cannot extract JSON path '${jsonPath}' from secret: secret value is a JSON primitive ` +
+      `(${typeof parsed}), not a JSON object. JSON path extraction requires a JSON object.`
+    );
+  }
+
+  // 3. Traverse the path using dot notation
+  const keys = jsonPath.split('.');
+  let value: unknown = parsed;
+
+  for (const key of keys) {
+    if (typeof value === 'object' && value !== null && key in value) {
+      value = (value as Record<string, unknown>)[key];
+    } else {
+      throw new Error(
+        `JSON path '${jsonPath}' not found in secret. Missing key: '${key}'. ` +
+        `Available top-level keys: ${Object.keys(parsed as Record<string, unknown>).join(', ')}`
+      );
+    }
+  }
+
+  // 4. Convert final value to string
+  if (typeof value === 'string') {
+    return value;
+  } else if (typeof value === 'number' || typeof value === 'boolean') {
+    return String(value);
+  } else if (value === null) {
+    throw new Error(
+      `Value at JSON path '${jsonPath}' is null. Cannot extract null values.`
+    );
+  } else {
+    throw new Error(
+      `Value at JSON path '${jsonPath}' is not a primitive type (got ${typeof value}: object/array). ` +
+      `Only string, number, and boolean values can be extracted.`
+    );
+  }
+}
+
+/**
  * Get secrets from vault
  * @param envVars Environment variables mapping to secret keys
  * @param vault Vault plugin instance
@@ -93,9 +156,33 @@ async function getSecrets(
 ): Promise<Record<string, string>> {
   const result: Record<string, string> = {};
 
-  for (const [key, secretId] of Object.entries(envVars)) {
+  for (const [key, secretIdWithPath] of Object.entries(envVars)) {
     try {
-      result[key] = await vault.getSecret(secretId);
+      // Parse secretId to separate actual secret ID from JSON path
+      // Split on the LAST # to handle edge cases where # might appear in secret ID
+      const lastHashIndex = secretIdWithPath.lastIndexOf('#');
+      const actualSecretId = lastHashIndex === -1 
+        ? secretIdWithPath 
+        : secretIdWithPath.substring(0, lastHashIndex);
+      const jsonPath = lastHashIndex === -1 
+        ? undefined 
+        : secretIdWithPath.substring(lastHashIndex + 1);
+      
+      // Validate jsonPath if present
+      if (jsonPath !== undefined && jsonPath.length === 0) {
+        throw new Error(
+          `Invalid secret ID format for ${key}: '${secretIdWithPath}'. ` +
+          `JSON path cannot be empty after '#' delimiter.`
+        );
+      }
+      
+      // Fetch secret from vault (plugin doesn't know about JSON paths)
+      const secretValue = await vault.getSecret(actualSecretId);
+      
+      // If JSON path specified, extract the value; otherwise use full secret
+      result[key] = jsonPath 
+        ? extractJsonPath(secretValue, jsonPath)
+        : secretValue;
     } catch (error) {
       console.error(`Failed to get secret for ${key}:`, error);
       throw error;
