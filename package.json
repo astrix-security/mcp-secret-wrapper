@@ -34,7 +34,8 @@
     "node": ">=14.0.0"
   },
   "dependencies": {
-    "@aws-sdk/client-secrets-manager": "^3.787.0"
+    "@aws-sdk/client-secrets-manager": "^3.787.0",
+    "@google-cloud/secret-manager": "^5.0.0"
   },
   "devDependencies": {
     "@types/aws-sdk": "^2.7.4",

@@ -82,9 +82,9 @@ https://github.com/user-attachments/assets/9af6e6b3-3694-49de-b107-8749e0630db3
 | Vault Type            | Status         | Description                                                  |
 | --------------------- | -------------- | ------------------------------------------------------------ |
 | AWS Secrets Manager   | ✅ Supported   | Full support for AWS Secrets Manager with IAM authentication |
+| GCP Secret Manager   | ✅ Supported   | Full support for GCP Secret Manager with service account and ADC authentication |
 | HashiCorp Vault       | 🚧 In-Progress | Support for HashiCorp Vault                                  |
 | Azure Key Vault       | 🚧 In-Progress | Support for Azure Key Vault                                  |
-| Google Secret Manager | 🚧 In-Progress | Support for Google Secret Manager                            |
 
 **📚 Detailed Documentation:** [Vault Specific Guides](./docs)
 

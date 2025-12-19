@@ -7,6 +7,9 @@ Welcome to the MCP Secret Wrapper documentation. This directory contains detaile
 ### [AWS Secrets Manager](./vaults/aws.md)
 Complete guide for integrating with AWS Secrets Manager, including authentication, configuration, and best practices.
 
+### [GCP Secret Manager](./vaults/gcp.md)
+Complete guide for integrating with GCP Secret Manager, including authentication, configuration, and best practices.
+
 ## Quick Start
 
 1. Choose your vault provider from the list above
@@ -22,6 +25,7 @@ MCP Secret Wrapper supports multiple vault types through a plugin architecture. 
 ### Secret References
 Secrets are referenced using vault-specific identifiers:
 - **AWS**: ARN format (`arn:aws:secretsmanager:region:account:secret:name`)
+- **GCP**: Resource name format (`projects/PROJECT_ID/secrets/SECRET_NAME/versions/VERSION`) or shorthand (`PROJECT_ID/SECRET_NAME`)
 
 ### Configuration Methods
 You can configure vault settings using:
