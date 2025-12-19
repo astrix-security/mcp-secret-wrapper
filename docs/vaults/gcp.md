@@ -196,3 +196,4 @@ Error: GCP projectId is required
 ```
 
 **Solution**: Provide projectId via --vault-projectId, VAULT_PROJECTID, keyFilename, credentials, or ensure gcloud config has a default project set.
+

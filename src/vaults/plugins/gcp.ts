@@ -113,9 +113,8 @@ export class GCPVaultPlugin implements VaultPlugin {
       clientConfig.projectId = config.projectId;
     }
 
-    // Validate that we have a projectId (required for secret access)
+    // Try to get from gcloud config as last resort (but don't require it yet)
     if (!this.resolvedProjectId && !clientConfig.projectId) {
-      // Try to get from gcloud config as last resort
       try {
         const projectId = execSync("gcloud config get-value project", {
           encoding: "utf8",
@@ -125,16 +124,12 @@ export class GCPVaultPlugin implements VaultPlugin {
           clientConfig.projectId = projectId;
         }
       } catch (error) {
-        // Ignore errors from gcloud command
-      }
-
-      if (!this.resolvedProjectId && !clientConfig.projectId) {
-        throw new Error(
-          "GCP projectId is required. Provide it via --vault-projectId, VAULT_PROJECTID, keyFilename, credentials, or gcloud config."
-        );
+        // Ignore errors from gcloud command - projectId can be extracted from secret ID later
       }
     }
 
+    // Note: projectId is not strictly required for client initialization
+    // It can be extracted from secret ID format in getSecret() if needed
     this.client = new SecretManagerServiceClient(clientConfig);
   }
 
@@ -148,11 +143,26 @@ export class GCPVaultPlugin implements VaultPlugin {
     // Normalize secret ID format
     let normalizedSecretId = secretId;
 
-    // If shorthand format (projectId/secretName or projectId/secretName/version)
-    if (!secretId.startsWith("projects/")) {
+    // If full format (projects/PROJECT_ID/secrets/...), extract projectId if not already set
+    if (secretId.startsWith("projects/")) {
+      const parts = secretId.split("/");
+      if (parts.length >= 2 && parts[0] === "projects" && !this.resolvedProjectId) {
+        // Extract projectId from secret ID format
+        this.resolvedProjectId = parts[1];
+      }
+      
+      // Ensure it has /versions/ part
+      if (!secretId.includes("/versions/")) {
+        // Add /versions/latest if not specified
+        normalizedSecretId = `${secretId}/versions/latest`;
+      } else {
+        normalizedSecretId = secretId;
+      }
+    } else {
+      // Shorthand format (projectId/secretName or projectId/secretName/version)
       if (!this.resolvedProjectId) {
         throw new Error(
-          "Cannot use shorthand secret ID format without projectId. Use full format: projects/PROJECT_ID/secrets/SECRET_NAME/versions/VERSION"
+          "Cannot use shorthand secret ID format without projectId. Use full format: projects/PROJECT_ID/secrets/SECRET_NAME/versions/VERSION or set projectId via --vault-projectId, VAULT_PROJECTID, keyFilename, credentials, or gcloud config."
         );
       }
 
@@ -177,12 +187,6 @@ export class GCPVaultPlugin implements VaultPlugin {
           `Invalid secret ID format: ${secretId}. Use format: projects/PROJECT_ID/secrets/SECRET_NAME/versions/VERSION or PROJECT_ID/SECRET_NAME`
         );
       }
-    } else {
-      // Full format provided, but ensure it has /versions/ part
-      if (!secretId.includes("/versions/")) {
-        // Add /versions/latest if not specified
-        normalizedSecretId = `${secretId}/versions/latest`;
-      }
     }
 
     try {
@@ -198,7 +202,24 @@ export class GCPVaultPlugin implements VaultPlugin {
       const secretValue = version.payload.data.toString("utf8");
       return secretValue;
     } catch (error: unknown) {
-      console.error(`Error retrieving secret ${secretId}:`, error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.error(`Error retrieving secret ${secretId} (normalized: ${normalizedSecretId}):`, errorMessage);
+      
+      // Provide more helpful error messages
+      if (errorMessage.includes("Permission denied") || errorMessage.includes("permission")) {
+        throw new Error(
+          `Permission denied accessing secret. Ensure your GCP credentials have the 'Secret Manager Secret Accessor' role. Original error: ${errorMessage}`
+        );
+      } else if (errorMessage.includes("not found") || errorMessage.includes("NotFound")) {
+        throw new Error(
+          `Secret not found: ${normalizedSecretId}. Verify the secret exists in the specified project. Original error: ${errorMessage}`
+        );
+      } else if (errorMessage.includes("Could not load the default credentials")) {
+        throw new Error(
+          `GCP credentials not found. Set GOOGLE_APPLICATION_CREDENTIALS, use --vault-keyFilename, or run 'gcloud auth application-default login'. Original error: ${errorMessage}`
+        );
+      }
+      
       throw error;
     }
   }
@@ -213,3 +234,4 @@ export class GCPVaultPlugin implements VaultPlugin {
     return this.config;
   }
 }
+
