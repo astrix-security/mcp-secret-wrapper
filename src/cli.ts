@@ -135,10 +135,15 @@ async function main(): Promise<void> {
 
     runMcpServer(command, commandArgs, secretValues);
   } catch (error) {
-    console.error(
-      "Error:",
-      error instanceof Error ? error.message : String(error)
-    );
+    // Write to stderr explicitly to ensure errors are visible
+    const errorMessage = error instanceof Error 
+      ? error.message 
+      : String(error);
+    const errorStack = error instanceof Error && error.stack
+      ? `\n${error.stack}`
+      : "";
+    
+    process.stderr.write(`mcp-secret-wrapper error: ${errorMessage}${errorStack}\n`);
     process.exit(1);
   }
 }

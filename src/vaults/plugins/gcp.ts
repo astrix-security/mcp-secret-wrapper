@@ -130,7 +130,14 @@ export class GCPVaultPlugin implements VaultPlugin {
 
     // Note: projectId is not strictly required for client initialization
     // It can be extracted from secret ID format in getSecret() if needed
-    this.client = new SecretManagerServiceClient(clientConfig);
+    try {
+      this.client = new SecretManagerServiceClient(clientConfig);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(
+        `Failed to initialize GCP Secret Manager client: ${errorMessage}. Ensure GCP credentials are configured via GOOGLE_APPLICATION_CREDENTIALS, --vault-keyFilename, or gcloud auth application-default login.`
+      );
+    }
   }
 
   async getSecret(secretId: string): Promise<string> {
