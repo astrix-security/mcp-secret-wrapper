@@ -116,7 +116,14 @@ async function main(): Promise<void> {
 
     // Skip the first two arguments (node and script path)
     const args = process.argv.slice(2);
-    const vaultConfig = VaultConfigParser.getVaultConfig(args);
+    
+    let vaultConfig;
+    try {
+      vaultConfig = VaultConfigParser.getVaultConfig(args);
+    } catch (error) {
+      process.stderr.write(`Error parsing vault config: ${error instanceof Error ? error.message : String(error)}\n`);
+      throw error;
+    }
 
     // Remove vault-related arguments from args
     const cleanArgs = VaultConfigParser.removeVaultArgs(args);
@@ -130,8 +137,21 @@ async function main(): Promise<void> {
 
     const [command, ...commandArgs] = commandWithArgs;
 
-    const vault = await vaultRegistry.createVault(vaultConfig);
-    const secretValues = await getSecrets(envVars, vault);
+    let vault;
+    try {
+      vault = await vaultRegistry.createVault(vaultConfig);
+    } catch (error) {
+      process.stderr.write(`Error creating vault: ${error instanceof Error ? error.message : String(error)}\n`);
+      throw error;
+    }
+    
+    let secretValues;
+    try {
+      secretValues = await getSecrets(envVars, vault);
+    } catch (error) {
+      process.stderr.write(`Error retrieving secrets: ${error instanceof Error ? error.message : String(error)}\n`);
+      throw error;
+    }
 
     runMcpServer(command, commandArgs, secretValues);
   } catch (error) {
@@ -150,7 +170,13 @@ async function main(): Promise<void> {
 
 // Run the CLI
 if (require.main === module) {
-  main();
+  main().catch((error) => {
+    process.stderr.write(`Unhandled error: ${error instanceof Error ? error.message : String(error)}\n`);
+    if (error instanceof Error && error.stack) {
+      process.stderr.write(`${error.stack}\n`);
+    }
+    process.exit(1);
+  });
 }
 
 export { parseCliArgs, getSecrets, runMcpServer };
