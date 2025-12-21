@@ -206,9 +206,14 @@ export class GCPVaultPlugin implements VaultPlugin {
       }
 
       // Convert secret data to string
-      // version.payload.data is a Uint8Array, so convert to Buffer first
-      const secretValue = Buffer.from(version.payload.data).toString("utf8");
-      return secretValue;
+      // version.payload.data can be string or Uint8Array
+      const data = version.payload.data;
+      if (typeof data === "string") {
+        return data;
+      } else {
+        // It's a Uint8Array, convert to Buffer then to string
+        return Buffer.from(data).toString("utf8");
+      }
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       console.error(`Error retrieving secret ${secretId} (normalized: ${normalizedSecretId}):`, errorMessage);
