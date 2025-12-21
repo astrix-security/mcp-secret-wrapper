@@ -17,7 +17,6 @@
 import { SecretManagerServiceClient } from "@google-cloud/secret-manager";
 import { VaultPlugin } from "../types";
 import * as fs from "fs";
-import { execSync } from "child_process";
 
 export interface GCPVaultConfig {
   projectId?: string;
@@ -113,21 +112,6 @@ export class GCPVaultPlugin implements VaultPlugin {
       clientConfig.projectId = config.projectId;
     }
 
-    // Try to get from gcloud config as last resort (but don't require it yet)
-    if (!this.resolvedProjectId && !clientConfig.projectId) {
-      try {
-        const projectId = execSync("gcloud config get-value project", {
-          encoding: "utf8",
-        }).trim();
-        if (projectId && projectId !== "(unset)") {
-          this.resolvedProjectId = projectId;
-          clientConfig.projectId = projectId;
-        }
-      } catch (error) {
-        // Ignore errors from gcloud command - projectId can be extracted from secret ID later
-      }
-    }
-
     // Note: projectId is not strictly required for client initialization
     // It can be extracted from secret ID format in getSecret() if needed
     try {
@@ -169,7 +153,7 @@ export class GCPVaultPlugin implements VaultPlugin {
       // Shorthand format (projectId/secretName or projectId/secretName/version)
       if (!this.resolvedProjectId) {
         throw new Error(
-          "Cannot use shorthand secret ID format without projectId. Use full format: projects/PROJECT_ID/secrets/SECRET_NAME/versions/VERSION or set projectId via --vault-projectId, VAULT_PROJECTID, keyFilename, credentials, or gcloud config."
+          "Cannot use shorthand secret ID format without projectId. Use full format: projects/PROJECT_ID/secrets/SECRET_NAME/versions/VERSION or set projectId via --vault-projectId, VAULT_PROJECTID, keyFilename, or credentials."
         );
       }
 
