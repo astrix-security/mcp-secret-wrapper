@@ -116,14 +116,7 @@ async function main(): Promise<void> {
 
     // Skip the first two arguments (node and script path)
     const args = process.argv.slice(2);
-    
-    let vaultConfig;
-    try {
-      vaultConfig = VaultConfigParser.getVaultConfig(args);
-    } catch (error) {
-      process.stderr.write(`Error parsing vault config: ${error instanceof Error ? error.message : String(error)}\n`);
-      throw error;
-    }
+    const vaultConfig = VaultConfigParser.getVaultConfig(args);
 
     // Remove vault-related arguments from args
     const cleanArgs = VaultConfigParser.removeVaultArgs(args);
@@ -137,46 +130,22 @@ async function main(): Promise<void> {
 
     const [command, ...commandArgs] = commandWithArgs;
 
-    let vault;
-    try {
-      vault = await vaultRegistry.createVault(vaultConfig);
-    } catch (error) {
-      process.stderr.write(`Error creating vault: ${error instanceof Error ? error.message : String(error)}\n`);
-      throw error;
-    }
-    
-    let secretValues;
-    try {
-      secretValues = await getSecrets(envVars, vault);
-    } catch (error) {
-      process.stderr.write(`Error retrieving secrets: ${error instanceof Error ? error.message : String(error)}\n`);
-      throw error;
-    }
+    const vault = await vaultRegistry.createVault(vaultConfig);
+    const secretValues = await getSecrets(envVars, vault);
 
     runMcpServer(command, commandArgs, secretValues);
   } catch (error) {
-    // Write to stderr explicitly to ensure errors are visible
-    const errorMessage = error instanceof Error 
-      ? error.message 
-      : String(error);
-    const errorStack = error instanceof Error && error.stack
-      ? `\n${error.stack}`
-      : "";
-    
-    process.stderr.write(`mcp-secret-wrapper error: ${errorMessage}${errorStack}\n`);
+    console.error(
+      "Error:",
+      error instanceof Error ? error.message : String(error)
+    );
     process.exit(1);
   }
 }
 
 // Run the CLI
 if (require.main === module) {
-  main().catch((error) => {
-    process.stderr.write(`Unhandled error: ${error instanceof Error ? error.message : String(error)}\n`);
-    if (error instanceof Error && error.stack) {
-      process.stderr.write(`${error.stack}\n`);
-    }
-    process.exit(1);
-  });
+  main();
 }
 
 export { parseCliArgs, getSecrets, runMcpServer };

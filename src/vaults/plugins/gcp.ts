@@ -114,14 +114,7 @@ export class GCPVaultPlugin implements VaultPlugin {
 
     // Note: projectId is not strictly required for client initialization
     // It can be extracted from secret ID format in getSecret() if needed
-    try {
-      this.client = new SecretManagerServiceClient(clientConfig);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      throw new Error(
-        `Failed to initialize GCP Secret Manager client: ${errorMessage}. Ensure GCP credentials are configured via GOOGLE_APPLICATION_CREDENTIALS, --vault-keyFilename, or gcloud auth application-default login.`
-      );
-    }
+    this.client = new SecretManagerServiceClient(clientConfig);
   }
 
   async getSecret(secretId: string): Promise<string> {
@@ -199,24 +192,7 @@ export class GCPVaultPlugin implements VaultPlugin {
         return Buffer.from(data).toString("utf8");
       }
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      console.error(`Error retrieving secret ${secretId} (normalized: ${normalizedSecretId}):`, errorMessage);
-      
-      // Provide more helpful error messages
-      if (errorMessage.includes("Permission denied") || errorMessage.includes("permission")) {
-        throw new Error(
-          `Permission denied accessing secret. Ensure your GCP credentials have the 'Secret Manager Secret Accessor' role. Original error: ${errorMessage}`
-        );
-      } else if (errorMessage.includes("not found") || errorMessage.includes("NotFound")) {
-        throw new Error(
-          `Secret not found: ${normalizedSecretId}. Verify the secret exists in the specified project. Original error: ${errorMessage}`
-        );
-      } else if (errorMessage.includes("Could not load the default credentials")) {
-        throw new Error(
-          `GCP credentials not found. Set GOOGLE_APPLICATION_CREDENTIALS, use --vault-keyFilename, or run 'gcloud auth application-default login'. Original error: ${errorMessage}`
-        );
-      }
-      
+      console.error(`Error retrieving secret ${secretId}:`, error);
       throw error;
     }
   }

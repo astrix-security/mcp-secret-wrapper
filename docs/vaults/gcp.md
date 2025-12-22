@@ -14,7 +14,7 @@ Using MCP Secret Wrapper, you can securely retrieve secrets from GCP Secret Mana
 
 ## Authentication
 
-MCP Secret Wrapper supports 4 GCP authentication methods: Application Default Credentials (ADC), service account key file, inline credentials, and gcloud CLI configuration.
+MCP Secret Wrapper supports 4 GCP authentication methods: Application Default Credentials (ADC), service account key file via environment variable, service account key file via configuration parameter, and inline credentials.
 
 ### Application Default Credentials (ADC)
 
@@ -26,7 +26,7 @@ gcloud auth application-default login
 
 This creates credentials stored locally that your application can use automatically.
 
-### Service Account Key File
+### Service Account Key File - Environment Variable
 
 Create a service account and download the key file:
 
@@ -41,27 +41,23 @@ Set the `GOOGLE_APPLICATION_CREDENTIALS` environment variable to point to the ke
 export GOOGLE_APPLICATION_CREDENTIALS=/path/to/service-account-key.json
 ```
 
+### Service Account Key File - Configuration Parameter
+
+Alternatively, provide the key file path via the `--vault-keyFilename` parameter or `VAULT_KEYFILENAME` environment variable (see [Configuration](#configuration)).
+
 ### Inline Credentials
 
 Provide credentials directly via configuration parameters (see [Configuration](#configuration)).
 
-### gcloud CLI Configuration
-
-If using `gcloud auth application-default login`, the project ID can be inferred from your gcloud configuration:
-
-```bash
-gcloud config get-value project
-```
-
 ## Configuration
 
-The GCP plugin supports 3 optional configuration parameters. If not set, it uses Application Default Credentials (ADC) and attempts to infer the project ID from your gcloud configuration.
+The GCP plugin supports 3 optional configuration parameters. If not set, it uses Application Default Credentials (ADC).
 
 * `vault-projectId` - Sets the GCP project ID, e.g. `my-project-123456`
 * `vault-keyFilename` - Sets the path to a service account key JSON file
 * `vault-credentials` - Sets inline credentials (client_email, private_key, project_id)
 
-**Note**: `projectId` is required for secret access. It can be provided explicitly, extracted from a key file, extracted from inline credentials, or inferred from gcloud config.
+**Note**: `projectId` is required for secret access. It can be provided explicitly, extracted from a key file, extracted from inline credentials, or extracted from the secret ID format.
 
 ### Command Line Arguments
 
@@ -189,11 +185,11 @@ Error: Secret [SECRET_NAME] not found
 
 **Solution**: Verify the secret name and that the secret exists in the specified project.
 
-#### 3. Project ID Not Found
+#### 3. Invalid Project ID
 
 ```
-Error: GCP projectId is required
+Error: The security token included in the request is invalid
 ```
 
-**Solution**: Provide projectId via --vault-projectId, VAULT_PROJECTID, keyFilename, credentials, or ensure gcloud config has a default project set.
+**Solution**: Check that the projectId specified matches where your credentials are valid. Verify you're using the correct key file or credentials.
 
