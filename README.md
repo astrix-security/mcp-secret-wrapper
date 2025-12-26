@@ -77,6 +77,14 @@ https://github.com/user-attachments/assets/9af6e6b3-3694-49de-b107-8749e0630db3
 
 **See what's going on behind-the-scenes by using our example MCP server:** [Example MCP Server](./example/README.md)
 
+## JSON Path Extraction
+
+> **TODO: Document JSON path extraction feature**
+> 
+> This section will document how to extract specific values from JSON secrets using path notation.
+> 
+> **Important reminder for documentation:** Make sure to clearly explain the delimiter (`#`) and the limitation that secret IDs should not contain `#` characters when using this feature.
+
 ## Support
 
 | Vault Type            | Status         | Description                                                  |

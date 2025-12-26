@@ -82,6 +82,31 @@ function runMcpServer(
 }
 
 /**
+ * Validate JSON path format
+ * @param jsonPath The JSON path to validate
+ * @throws Error if path format is invalid
+ */
+function validateJsonPath(jsonPath: string): void {
+  if (jsonPath.length === 0) {
+    throw new Error("JSON path cannot be empty");
+  }
+
+  if (jsonPath.startsWith(".") || jsonPath.endsWith(".")) {
+    throw new Error(
+      `JSON path '${jsonPath}' cannot start or end with a dot. Use format like 'key.subkey'`
+    );
+  }
+
+  const segments = jsonPath.split(".");
+  const emptySegments = segments.filter((seg) => seg.length === 0);
+  if (emptySegments.length > 0) {
+    throw new Error(
+      `JSON path '${jsonPath}' contains empty segments. Use format like 'key.subkey' without consecutive dots`
+    );
+  }
+}
+
+/**
  * Extract a value from a JSON string using dot-notation path
  * @param jsonString The JSON string to parse
  * @param jsonPath Dot-notation path (e.g., "credentials.password")
@@ -89,6 +114,9 @@ function runMcpServer(
  * @throws Error if JSON is invalid, path doesn't exist, or value is not a primitive
  */
 function extractJsonPath(jsonString: string, jsonPath: string): string {
+  // Validate path format first
+  validateJsonPath(jsonPath);
+
   // 1. Try to parse as JSON
   let parsed: unknown;
   try {
@@ -104,8 +132,15 @@ function extractJsonPath(jsonString: string, jsonPath: string): string {
     throw error;
   }
 
-  // 2. Validate it's an object (not a primitive JSON value like string, number, boolean)
-  if (typeof parsed !== 'object' || parsed === null) {
+  // 2. Validate it's a plain object (not an array, not a primitive)
+  if (Array.isArray(parsed)) {
+    throw new Error(
+      `Cannot extract JSON path '${jsonPath}' from secret: secret value is a JSON array, not a JSON object. ` +
+      `JSON path extraction requires a JSON object with key-value pairs.`
+    );
+  }
+
+  if (typeof parsed !== "object" || parsed === null) {
     throw new Error(
       `Cannot extract JSON path '${jsonPath}' from secret: secret value is a JSON primitive ` +
       `(${typeof parsed}), not a JSON object. JSON path extraction requires a JSON object.`
@@ -113,33 +148,71 @@ function extractJsonPath(jsonString: string, jsonPath: string): string {
   }
 
   // 3. Traverse the path using dot notation
-  const keys = jsonPath.split('.');
+  const keys = jsonPath.split(".");
   let value: unknown = parsed;
+  const pathSegments: string[] = [];
 
-  for (const key of keys) {
-    if (typeof value === 'object' && value !== null && key in value) {
-      value = (value as Record<string, unknown>)[key];
-    } else {
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
+    const parentPath = pathSegments.length > 0 ? pathSegments.join(".") : null;
+
+    // Ensure current value is a plain object (not array, not null, not primitive)
+    if (Array.isArray(value)) {
+      const pathDescription = parentPath
+        ? `path '${parentPath}'`
+        : "top-level";
       throw new Error(
-        `JSON path '${jsonPath}' not found in secret. Missing key: '${key}'. ` +
-        `Available top-level keys: ${Object.keys(parsed as Record<string, unknown>).join(', ')}`
+        `Cannot extract JSON path '${jsonPath}' from secret: value at ${pathDescription} is an array, not an object. ` +
+        `Cannot access property '${key}' on an array. JSON path extraction requires objects with key-value pairs.`
+      );
+    }
+
+    if (typeof value !== "object" || value === null) {
+      const pathDescription = parentPath
+        ? `path '${parentPath}'`
+        : "top-level";
+      throw new Error(
+        `Cannot extract JSON path '${jsonPath}' from secret: value at ${pathDescription} is a ${typeof value}, not an object. ` +
+        `Cannot access property '${key}' on a ${typeof value}. JSON path extraction requires objects with key-value pairs.`
+      );
+    }
+
+    // Access the property
+    if (key in value) {
+      value = (value as Record<string, unknown>)[key];
+      pathSegments.push(key);
+    } else {
+      // Provide context-appropriate error message
+      const availableKeys = Object.keys(value as Record<string, unknown>);
+      const pathDescription = parentPath
+        ? `path '${parentPath}'`
+        : "top-level";
+      throw new Error(
+        `Cannot extract JSON path '${jsonPath}' from secret: key '${key}' not found at ${pathDescription}. ` +
+        `Available keys: ${availableKeys.length > 0 ? availableKeys.join(", ") : "(none)"}`
       );
     }
   }
 
   // 4. Convert final value to string
-  if (typeof value === 'string') {
+  if (typeof value === "string") {
     return value;
-  } else if (typeof value === 'number' || typeof value === 'boolean') {
+  } else if (typeof value === "number" || typeof value === "boolean") {
     return String(value);
   } else if (value === null) {
     throw new Error(
-      `Value at JSON path '${jsonPath}' is null. Cannot extract null values.`
+      `Cannot extract JSON path '${jsonPath}' from secret: value at path '${jsonPath}' is null. ` +
+      `Only non-null primitive values (string, number, boolean) can be extracted.`
+    );
+  } else if (Array.isArray(value)) {
+    throw new Error(
+      `Cannot extract JSON path '${jsonPath}' from secret: value at path '${jsonPath}' is an array. ` +
+      `Only primitive values (string, number, boolean) can be extracted, not arrays or objects.`
     );
   } else {
     throw new Error(
-      `Value at JSON path '${jsonPath}' is not a primitive type (got ${typeof value}: object/array). ` +
-      `Only string, number, and boolean values can be extracted.`
+      `Cannot extract JSON path '${jsonPath}' from secret: value at path '${jsonPath}' is an object. ` +
+      `Only primitive values (string, number, boolean) can be extracted, not objects or arrays.`
     );
   }
 }
@@ -160,14 +233,16 @@ async function getSecrets(
     try {
       // Parse secretId to separate actual secret ID from JSON path
       // Split on the LAST # to handle edge cases where # might appear in secret ID
-      const lastHashIndex = secretIdWithPath.lastIndexOf('#');
-      const actualSecretId = lastHashIndex === -1 
-        ? secretIdWithPath 
-        : secretIdWithPath.substring(0, lastHashIndex);
-      const jsonPath = lastHashIndex === -1 
-        ? undefined 
-        : secretIdWithPath.substring(lastHashIndex + 1);
-      
+      const lastHashIndex = secretIdWithPath.lastIndexOf("#");
+      const actualSecretId =
+        lastHashIndex === -1
+          ? secretIdWithPath
+          : secretIdWithPath.substring(0, lastHashIndex);
+      const jsonPath =
+        lastHashIndex === -1
+          ? undefined
+          : secretIdWithPath.substring(lastHashIndex + 1);
+
       // Validate jsonPath if present
       if (jsonPath !== undefined && jsonPath.length === 0) {
         throw new Error(
@@ -175,12 +250,12 @@ async function getSecrets(
           `JSON path cannot be empty after '#' delimiter.`
         );
       }
-      
+
       // Fetch secret from vault (plugin doesn't know about JSON paths)
       const secretValue = await vault.getSecret(actualSecretId);
-      
+
       // If JSON path specified, extract the value; otherwise use full secret
-      result[key] = jsonPath 
+      result[key] = jsonPath
         ? extractJsonPath(secretValue, jsonPath)
         : secretValue;
     } catch (error) {
