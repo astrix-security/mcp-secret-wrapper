@@ -133,17 +133,15 @@ function extractJsonPath(jsonString: string, jsonPath: string): string {
   }
 
   // 2. Validate it's a plain object (not an array, not a primitive)
-  if (Array.isArray(parsed)) {
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    const valueType = Array.isArray(parsed)
+      ? "a JSON array"
+      : parsed === null
+        ? "null"
+        : `a JSON primitive (${typeof parsed})`;
     throw new Error(
-      `Cannot extract JSON path '${jsonPath}' from secret: secret value is a JSON array, not a JSON object. ` +
+      `Cannot extract JSON path '${jsonPath}' from secret: secret value is ${valueType}, not a JSON object. ` +
       `JSON path extraction requires a JSON object with key-value pairs.`
-    );
-  }
-
-  if (typeof parsed !== "object" || parsed === null) {
-    throw new Error(
-      `Cannot extract JSON path '${jsonPath}' from secret: secret value is a JSON primitive ` +
-      `(${typeof parsed}), not a JSON object. JSON path extraction requires a JSON object.`
     );
   }
 
@@ -157,23 +155,18 @@ function extractJsonPath(jsonString: string, jsonPath: string): string {
     const parentPath = pathSegments.length > 0 ? pathSegments.join(".") : null;
 
     // Ensure current value is a plain object (not array, not null, not primitive)
-    if (Array.isArray(value)) {
+    if (!value || typeof value !== "object" || Array.isArray(value)) {
       const pathDescription = parentPath
         ? `path '${parentPath}'`
         : "top-level";
+      const valueType = Array.isArray(value)
+        ? "an array"
+        : value === null
+          ? "null"
+          : `a ${typeof value}`;
       throw new Error(
-        `Cannot extract JSON path '${jsonPath}' from secret: value at ${pathDescription} is an array, not an object. ` +
-        `Cannot access property '${key}' on an array. JSON path extraction requires objects with key-value pairs.`
-      );
-    }
-
-    if (typeof value !== "object" || value === null) {
-      const pathDescription = parentPath
-        ? `path '${parentPath}'`
-        : "top-level";
-      throw new Error(
-        `Cannot extract JSON path '${jsonPath}' from secret: value at ${pathDescription} is a ${typeof value}, not an object. ` +
-        `Cannot access property '${key}' on a ${typeof value}. JSON path extraction requires objects with key-value pairs.`
+        `Cannot extract JSON path '${jsonPath}' from secret: value at ${pathDescription} is ${valueType}, not a plain object. ` +
+        `Cannot access property '${key}' on ${valueType}. JSON path extraction requires plain objects with key-value pairs.`
       );
     }
 
