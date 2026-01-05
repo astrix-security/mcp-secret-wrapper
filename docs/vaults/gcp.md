@@ -68,7 +68,7 @@ The GCP plugin supports 3 optional configuration parameters. If not set, it uses
       "command": "npx",
       "args": [
         "-y",
-        "git+https://github.com/astrix-security/mcp-secret-wrapper", // TODO - Change
+        "git+https://github.com/astrix-security/mcp-secret-wrapper",
         "--vault-keyFilename=/path/to/service-account-key.json",
         "--vault-type=gcp",
         "--vault-projectId=my-project-123456",
@@ -92,7 +92,7 @@ The GCP plugin supports 3 optional configuration parameters. If not set, it uses
       "command": "npx",
       "args": [
         "-y",
-        "git+https://github.com/astrix-security/mcp-secret-wrapper", // TODO - Change
+        "git+https://github.com/astrix-security/mcp-secret-wrapper",
         "API_KEY=projects/my-project-123456/secrets/api-key/versions/latest",
         "--",
         "npx",
