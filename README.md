@@ -140,10 +140,17 @@ You can extract individual values using these paths:
 
 ### Important Notes
 
-⚠️ **Secret ID Limitation**: When using JSON path extraction, your secret ID (the part before the `#`) should not contain `#` characters. The parser splits on the **last** `#` in the string, so if your secret ID contains `#`, it may be incorrectly parsed.
+⚠️ **Secret ID and the `#` Delimiter**: The `#` character is used as the delimiter for JSON path extraction. 
 
-- ✅ **Good**: `arn:aws:secretsmanager:us-east-1:123456789012:secret:my-secret#db.password`
-- ❌ **Avoid**: `arn:aws:secretsmanager:us-east-1:123456789012:secret:my#secret#db.password` (ambiguous parsing)
+**Why this delimiter?** Using `#` in secret names is generally considered bad practice across vault systems (AWS Secrets Manager, GCP Secrets Manager, etc.), so it's unlikely to appear in real secret IDs. This makes it a safe choice for our delimiter.
+
+**What happens if your secret ID contains `#`?**
+
+- ❌ **Without JSON path**: If your secret ID is `my#secret` and you use it without a JSON path (`API_KEY=my#secret`), the parser will incorrectly split it, treating `my` as the secret ID and `secret` as a JSON path. This will cause the lookup to fail.
+
+- ✅ **With JSON path**: If your secret ID is `my#secret` and you use it with a JSON path (`API_KEY=my#secret#db.password`), it will work correctly because the parser splits on the **last** `#` character.
+
+**Best practice**: Avoid using `#` in your secret names entirely. This follows vault naming conventions and prevents parsing issues when you're not using JSON path extraction.
 
 ### Supported Value Types
 
