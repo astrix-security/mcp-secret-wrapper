@@ -57,7 +57,7 @@ The GCP plugin supports 3 optional configuration parameters. If not set, it uses
 * `vault-keyFilename` - Sets the path to a service account key JSON file
 * `vault-credentials` - Sets inline credentials (client_email, private_key, project_id)
 
-**Note**: `projectId` is required for secret access. It can be provided explicitly, extracted from a key file, extracted from inline credentials, or extracted from the secret ID format.
+**Note**: `projectId` is optional for client initialization. Secret IDs must use the full resource path format: `projects/PROJECT_ID/secrets/SECRET_NAME/versions/VERSION`.
 
 ### Command Line Arguments
 
@@ -141,9 +141,9 @@ echo -n "api_key_value_example" | gcloud secrets versions add mcp-api-key \
 5. Configure replication and access permissions
 6. Click "Create Secret"
 
-### Secret Names
+### Secret Resource Names
 
-GCP Secret Manager uses resource names to identify secrets:
+GCP Secret Manager uses full resource names to identify secrets. You must provide the complete resource path:
 
 ```
 projects/PROJECT_ID/secrets/SECRET_NAME/versions/VERSION
@@ -155,15 +155,7 @@ projects/my-project-123456/secrets/my-api-key/versions/latest
 projects/my-project-123456/secrets/my-api-key/versions/1
 ```
 
-**Shorthand Format**: You can also use a shorter format when `projectId` is configured:
-
-```
-PROJECT_ID/SECRET_NAME
-PROJECT_ID/SECRET_NAME/VERSION
-SECRET_NAME
-```
-
-The plugin will automatically expand these to the full format. If no version is specified, `latest` is used by default.
+**Note**: If you omit the `/versions/VERSION` part, the plugin will automatically append `/versions/latest` to use the latest version of the secret.
 
 ## Troubleshooting
 
@@ -183,7 +175,7 @@ Error: Permission denied on resource
 Error: Secret [SECRET_NAME] not found
 ```
 
-**Solution**: Verify the secret name and that the secret exists in the specified project.
+**Solution**: Verify the full secret resource path (`projects/PROJECT_ID/secrets/SECRET_NAME/versions/VERSION`) and that the secret exists in the specified project.
 
 #### 3. Invalid Project ID
 

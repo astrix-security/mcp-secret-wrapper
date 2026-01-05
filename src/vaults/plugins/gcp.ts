@@ -41,7 +41,6 @@ export class GCPVaultPlugin implements VaultPlugin {
 
   private client?: SecretManagerServiceClient;
   private config?: GCPVaultConfig;
-  private resolvedProjectId?: string;
 
   async initialize(config: GCPVaultConfig): Promise<void> {
     this.config = config;
@@ -66,7 +65,6 @@ export class GCPVaultPlugin implements VaultPlugin {
             fs.readFileSync(config.keyFilename, "utf8")
           );
           if (keyFile.project_id) {
-            this.resolvedProjectId = keyFile.project_id;
             clientConfig.projectId = keyFile.project_id;
           }
         } catch (error) {
@@ -85,7 +83,6 @@ export class GCPVaultPlugin implements VaultPlugin {
         try {
           const keyFile = JSON.parse(fs.readFileSync(keyFilePath, "utf8"));
           if (keyFile.project_id) {
-            this.resolvedProjectId = keyFile.project_id;
             clientConfig.projectId = keyFile.project_id;
           }
         } catch (error) {
@@ -99,7 +96,6 @@ export class GCPVaultPlugin implements VaultPlugin {
     else if (config.credentials) {
       clientConfig.credentials = config.credentials;
       if (config.credentials.project_id) {
-        this.resolvedProjectId = config.credentials.project_id;
         clientConfig.projectId = config.credentials.project_id;
       }
     }
@@ -108,12 +104,11 @@ export class GCPVaultPlugin implements VaultPlugin {
 
     // Explicit projectId takes precedence
     if (config.projectId) {
-      this.resolvedProjectId = config.projectId;
       clientConfig.projectId = config.projectId;
     }
 
-    // Note: projectId is not strictly required for client initialization
-    // It can be extracted from secret ID format in getSecret() if needed
+    // Note: projectId is optional for client initialization
+    // Secret IDs must use full path format: projects/PROJECT_ID/secrets/SECRET_NAME/versions/VERSION
     this.client = new SecretManagerServiceClient(clientConfig);
   }
 
@@ -124,53 +119,20 @@ export class GCPVaultPlugin implements VaultPlugin {
       );
     }
 
-    // Normalize secret ID format
+    // Validate and normalize full path format
+    if (!secretId.startsWith("projects/")) {
+      throw new Error(
+        `Invalid secret ID format: '${secretId}'. ` +
+        `GCP Secret Manager requires full resource path format: ` +
+        `projects/PROJECT_ID/secrets/SECRET_NAME/versions/VERSION or ` +
+        `projects/PROJECT_ID/secrets/SECRET_NAME/versions/latest`
+      );
+    }
+
+    // Ensure it has /versions/ part, default to latest if missing
     let normalizedSecretId = secretId;
-
-    // If full format (projects/PROJECT_ID/secrets/...), extract projectId if not already set
-    if (secretId.startsWith("projects/")) {
-      const parts = secretId.split("/");
-      if (parts.length >= 2 && parts[0] === "projects" && !this.resolvedProjectId) {
-        // Extract projectId from secret ID format
-        this.resolvedProjectId = parts[1];
-      }
-      
-      // Ensure it has /versions/ part
-      if (!secretId.includes("/versions/")) {
-        // Add /versions/latest if not specified
-        normalizedSecretId = `${secretId}/versions/latest`;
-      } else {
-        normalizedSecretId = secretId;
-      }
-    } else {
-      // Shorthand format (projectId/secretName or projectId/secretName/version)
-      if (!this.resolvedProjectId) {
-        throw new Error(
-          "Cannot use shorthand secret ID format without projectId. Use full format: projects/PROJECT_ID/secrets/SECRET_NAME/versions/VERSION or set projectId via --vault-projectId, VAULT_PROJECTID, keyFilename, or credentials."
-        );
-      }
-
-      const parts = secretId.split("/");
-      if (parts.length === 1) {
-        // Just secret name, default to latest version
-        normalizedSecretId = `projects/${this.resolvedProjectId}/secrets/${parts[0]}/versions/latest`;
-      } else if (parts.length === 2) {
-        // projectId/secretName or secretName/version
-        // Check if first part matches projectId
-        if (parts[0] === this.resolvedProjectId) {
-          normalizedSecretId = `projects/${parts[0]}/secrets/${parts[1]}/versions/latest`;
-        } else {
-          // Assume it's secretName/version
-          normalizedSecretId = `projects/${this.resolvedProjectId}/secrets/${parts[0]}/versions/${parts[1]}`;
-        }
-      } else if (parts.length === 3) {
-        // projectId/secretName/version
-        normalizedSecretId = `projects/${parts[0]}/secrets/${parts[1]}/versions/${parts[2]}`;
-      } else {
-        throw new Error(
-          `Invalid secret ID format: ${secretId}. Use format: projects/PROJECT_ID/secrets/SECRET_NAME/versions/VERSION or PROJECT_ID/SECRET_NAME`
-        );
-      }
+    if (!secretId.includes("/versions/")) {
+      normalizedSecretId = `${secretId}/versions/latest`;
     }
 
     try {
