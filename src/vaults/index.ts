@@ -18,3 +18,4 @@ export * from "./types";
 export { DefaultVaultRegistry, vaultRegistry } from "./registry";
 export { VaultConfigParser } from "./config";
 export { AWSVaultPlugin, AWSVaultConfig } from "./plugins/aws";
+export { GCPVaultPlugin, GCPVaultConfig } from "./plugins/gcp";

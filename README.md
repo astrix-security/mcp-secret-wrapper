@@ -171,9 +171,9 @@ If you need to extract a nested object or array, you'll need to store it as a se
 | Vault Type            | Status         | Description                                                  |
 | --------------------- | -------------- | ------------------------------------------------------------ |
 | AWS Secrets Manager   | ✅ Supported   | Full support for AWS Secrets Manager with IAM authentication |
+| GCP Secret Manager   | ✅ Supported   | Full support for GCP Secret Manager with service account and ADC authentication |
 | HashiCorp Vault       | 🚧 In-Progress | Support for HashiCorp Vault                                  |
 | Azure Key Vault       | 🚧 In-Progress | Support for Azure Key Vault                                  |
-| Google Secret Manager | 🚧 In-Progress | Support for Google Secret Manager                            |
 
 **📚 Detailed Documentation:** [Vault Specific Guides](./docs)
 
