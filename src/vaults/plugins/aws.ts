@@ -72,7 +72,7 @@ export class AWSVaultPlugin implements VaultPlugin {
   async getSecret(secretId: string): Promise<string> {
     if (!this.client) {
       throw new Error(
-        "AWS vault plugin not initialized. Call initialize() first."
+        "AWS vault plugin not initialized. Call initialize() first.",
       );
     }
 

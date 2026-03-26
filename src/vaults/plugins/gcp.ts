@@ -62,14 +62,14 @@ export class GCPVaultPlugin implements VaultPlugin {
       if (!config.projectId) {
         try {
           const keyFile = JSON.parse(
-            fs.readFileSync(config.keyFilename, "utf8")
+            fs.readFileSync(config.keyFilename, "utf8"),
           );
           if (keyFile.project_id) {
             clientConfig.projectId = keyFile.project_id;
           }
         } catch (error) {
           throw new Error(
-            `Failed to read or parse key file ${config.keyFilename}: ${error}`
+            `Failed to read or parse key file ${config.keyFilename}: ${error}`,
           );
         }
       }
@@ -87,7 +87,7 @@ export class GCPVaultPlugin implements VaultPlugin {
           }
         } catch (error) {
           throw new Error(
-            `Failed to read or parse key file ${keyFilePath}: ${error}`
+            `Failed to read or parse key file ${keyFilePath}: ${error}`,
           );
         }
       }
@@ -115,7 +115,7 @@ export class GCPVaultPlugin implements VaultPlugin {
   async getSecret(secretId: string): Promise<string> {
     if (!this.client) {
       throw new Error(
-        "GCP vault plugin not initialized. Call initialize() first."
+        "GCP vault plugin not initialized. Call initialize() first.",
       );
     }
 
@@ -123,9 +123,9 @@ export class GCPVaultPlugin implements VaultPlugin {
     if (!secretId.startsWith("projects/")) {
       throw new Error(
         `Invalid secret ID format: '${secretId}'. ` +
-        `GCP Secret Manager requires full resource path format: ` +
-        `projects/PROJECT_ID/secrets/SECRET_NAME/versions/VERSION or ` +
-        `projects/PROJECT_ID/secrets/SECRET_NAME/versions/latest`
+          `GCP Secret Manager requires full resource path format: ` +
+          `projects/PROJECT_ID/secrets/SECRET_NAME/versions/VERSION or ` +
+          `projects/PROJECT_ID/secrets/SECRET_NAME/versions/latest`,
       );
     }
 
@@ -169,4 +169,3 @@ export class GCPVaultPlugin implements VaultPlugin {
     return this.config;
   }
 }
-

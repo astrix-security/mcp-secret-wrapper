@@ -34,11 +34,11 @@ Use `aws sts assume-role` commands or `aws sts get-session-token` and inject the
 
 The AWS plugin supports 5 optional configuration parameters. If not set, it uses the credentials configured for the default AWS profile.
 
-* `vault-profile` - Sets the CLI profile used
-* `vault-region` - Sets the AWS region, e.g. `us-east-1`
-* `vault-accessKeyId` - Sets a static access key ID
-* `vault-secretAccessKey` - Sets a static access key secret 
-* `vault-sessionToken` - Sets a static session token
+- `vault-profile` - Sets the CLI profile used
+- `vault-region` - Sets the AWS region, e.g. `us-east-1`
+- `vault-accessKeyId` - Sets a static access key ID
+- `vault-secretAccessKey` - Sets a static access key secret
+- `vault-sessionToken` - Sets a static session token
 
 ### Command Line Arguments
 
@@ -126,6 +126,7 @@ arn:aws:secretsmanager:region:account-id:secret:secret-name
 ```
 
 Example:
+
 ```
 arn:aws:secretsmanager:us-east-1:123456789012:secret:my-app/api-key-ABC123
 ```

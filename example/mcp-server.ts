@@ -135,10 +135,10 @@ const missingSecrets = requiredSecrets.filter((secret) => !process.env[secret]);
 
 if (missingSecrets.length > 0) {
   console.error(
-    `❌ Missing required environment variables: ${missingSecrets.join(", ")}`
+    `❌ Missing required environment variables: ${missingSecrets.join(", ")}`,
   );
   console.error(
-    "Please ensure these secrets are injected via the mcp-secret-wrapper tool"
+    "Please ensure these secrets are injected via the mcp-secret-wrapper tool",
   );
   process.exit(1);
 }

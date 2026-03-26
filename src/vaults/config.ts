@@ -87,7 +87,7 @@ export class VaultConfigParser {
     }
 
     throw new Error(
-      "No vault configuration found. Please specify --vault-type or set VAULT_TYPE environment variable."
+      "No vault configuration found. Please specify --vault-type or set VAULT_TYPE environment variable.",
     );
   }
 

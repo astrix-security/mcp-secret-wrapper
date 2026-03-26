@@ -140,7 +140,7 @@ You can extract individual values using these paths:
 
 ### Important Notes
 
-⚠️ **Secret ID and the `#` Delimiter**: The `#` character is used as the delimiter for JSON path extraction. 
+⚠️ **Secret ID and the `#` Delimiter**: The `#` character is used as the delimiter for JSON path extraction.
 
 **Why this delimiter?** Using `#` in secret names is generally considered bad practice across vault systems (AWS Secrets Manager, GCP Secrets Manager, etc.), so it's unlikely to appear in real secret IDs. This makes it a safe choice for our delimiter.
 
@@ -155,11 +155,13 @@ You can extract individual values using these paths:
 ### Supported Value Types
 
 JSON path extraction supports extracting primitive values:
+
 - **Strings**: Returned as-is
 - **Numbers**: Converted to string representation
 - **Booleans**: Converted to string (`"true"` or `"false"`)
 
 **Not supported:**
+
 - Arrays
 - Objects (nested objects)
 - `null` values
@@ -168,12 +170,12 @@ If you need to extract a nested object or array, you'll need to store it as a se
 
 ## Support
 
-| Vault Type            | Status         | Description                                                  |
-| --------------------- | -------------- | ------------------------------------------------------------ |
-| AWS Secrets Manager   | ✅ Supported   | Full support for AWS Secrets Manager with IAM authentication |
-| GCP Secret Manager   | ✅ Supported   | Full support for GCP Secret Manager with service account and ADC authentication |
-| HashiCorp Vault       | 🚧 In-Progress | Support for HashiCorp Vault                                  |
-| Azure Key Vault       | 🚧 In-Progress | Support for Azure Key Vault                                  |
+| Vault Type          | Status         | Description                                                                     |
+| ------------------- | -------------- | ------------------------------------------------------------------------------- |
+| AWS Secrets Manager | ✅ Supported   | Full support for AWS Secrets Manager with IAM authentication                    |
+| GCP Secret Manager  | ✅ Supported   | Full support for GCP Secret Manager with service account and ADC authentication |
+| HashiCorp Vault     | 🚧 In-Progress | Support for HashiCorp Vault                                                     |
+| Azure Key Vault     | 🚧 In-Progress | Support for Azure Key Vault                                                     |
 
 **📚 Detailed Documentation:** [Vault Specific Guides](./docs)
 
