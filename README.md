@@ -229,6 +229,7 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](./LICE
 - **Yuval Sasson** - For pioneering the initiative to dynamically retrieve secrets for MCP servers
 - **Omer Alon** - For developing and releasing the MCP Secert Wrapper tool
 - **Oshri Shmuel** - For developing and releasing the MCP Secert Wrapper tool
+- **Neta Ravid** - For developing, releasing, and maintaining the MCP Secret Wrapper tool
 - **MCP Community** - For creating and maintaining the MCP framework
 
 ---
