@@ -34,7 +34,7 @@ This project adheres to a code of conduct that we expect all contributors to fol
 
 ### Prerequisites
 
-- Node.js 14+ 
+- Node.js 14+
 - npm
 - Git
 
@@ -61,6 +61,7 @@ npm run build
 ### Branch Strategy
 
 1. **Create a feature branch** from `main`:
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
@@ -87,6 +88,7 @@ npm run build
 ### Pull Request Process
 
 1. **Ensure your branch is up to date**:
+
    ```bash
    git checkout main
    git pull upstream main
@@ -95,6 +97,7 @@ npm run build
    ```
 
 2. **Push your changes**:
+
    ```bash
    git push origin feature/your-feature-name
    ```
@@ -160,7 +163,7 @@ this.register(new YourVaultPlugin());
 
 - Update the support table in `README.md`
 - Add usage examples in the `example` directory
-- Document configuration options in `docs` directory 
+- Document configuration options in `docs` directory
 
 ## Reporting Issues
 
@@ -193,6 +196,7 @@ For feature requests, please include:
 ## Recognition
 
 Contributors will be recognized in:
+
 - The project's README.md
 - Release notes for significant contributions
 - GitHub's contributor graph

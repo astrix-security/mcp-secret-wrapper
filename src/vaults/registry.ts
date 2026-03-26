@@ -38,14 +38,14 @@ export class DefaultVaultRegistry implements VaultRegistry {
     const plugin = this.get(config.type);
     if (!plugin) {
       throw new Error(
-        `Vault plugin '${config.type}' not found. Available plugins: ${this.list().join(", ")}`
+        `Vault plugin '${config.type}' not found. Available plugins: ${this.list().join(", ")}`,
       );
     }
 
     // Validate configuration
     if (!plugin.validateConfig(config.params)) {
       throw new Error(
-        `Invalid configuration for vault plugin '${config.type}'`
+        `Invalid configuration for vault plugin '${config.type}'`,
       );
     }
 

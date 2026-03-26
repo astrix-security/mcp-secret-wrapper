@@ -53,9 +53,9 @@ Provide credentials directly via configuration parameters (see [Configuration](#
 
 The GCP plugin supports 3 optional configuration parameters. If not set, it uses Application Default Credentials (ADC).
 
-* `vault-projectId` - Sets the GCP project ID, e.g. `my-project-123456`
-* `vault-keyFilename` - Sets the path to a service account key JSON file
-* `vault-credentials` - Sets inline credentials (client_email, private_key, project_id)
+- `vault-projectId` - Sets the GCP project ID, e.g. `my-project-123456`
+- `vault-keyFilename` - Sets the path to a service account key JSON file
+- `vault-credentials` - Sets inline credentials (client_email, private_key, project_id)
 
 **Note**: `projectId` is optional for client initialization. Secret IDs must use the full resource path format: `projects/PROJECT_ID/secrets/SECRET_NAME/versions/VERSION`.
 
@@ -150,6 +150,7 @@ projects/PROJECT_ID/secrets/SECRET_NAME/versions/VERSION
 ```
 
 Examples:
+
 ```
 projects/my-project-123456/secrets/my-api-key/versions/latest
 projects/my-project-123456/secrets/my-api-key/versions/1
@@ -184,4 +185,3 @@ Error: The security token included in the request is invalid
 ```
 
 **Solution**: Check that the projectId specified matches where your credentials are valid. Verify you're using the correct key file or credentials.
-
