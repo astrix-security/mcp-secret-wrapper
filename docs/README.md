@@ -12,6 +12,9 @@ Complete guide for integrating with AWS Secrets Manager, including authenticatio
 
 Complete guide for integrating with GCP Secret Manager, including authentication, configuration, and best practices.
 
+### [Azure Key Vault](./vaults/azure.md)
+Complete guide for integrating with Azure Key Vault, including authentication, configuration, and best practices.
+
 ## Quick Start
 
 1. Choose your vault provider from the list above
@@ -31,6 +34,7 @@ Secrets are referenced using vault-specific identifiers:
 
 - **AWS**: ARN format (`arn:aws:secretsmanager:region:account:secret:name`)
 - **GCP**: Resource name format (`projects/PROJECT_ID/secrets/SECRET_NAME/versions/VERSION`) or shorthand (`PROJECT_ID/SECRET_NAME`)
+- **Azure**: Secret name (`my-api-key`) or with version (`my-api-key/version-guid`)
 
 ### Configuration Methods
 

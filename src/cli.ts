@@ -23,6 +23,7 @@ import {
   VaultConfigParser,
   AWSVaultPlugin,
   GCPVaultPlugin,
+  AzureVaultPlugin,
 } from "./vaults";
 
 /**
@@ -264,6 +265,7 @@ async function main(): Promise<void> {
   try {
     vaultRegistry.register(new AWSVaultPlugin());
     vaultRegistry.register(new GCPVaultPlugin());
+    vaultRegistry.register(new AzureVaultPlugin());
 
     // Skip the first two arguments (node and script path)
     const args = process.argv.slice(2);
