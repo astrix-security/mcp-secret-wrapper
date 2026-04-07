@@ -49,4 +49,15 @@ export default [
       },
     },
   },
+  {
+    files: ["**/__tests__/**/*.ts", "**/*.test.ts"],
+    languageOptions: {
+      globals: {
+        ...globals.jest,
+      },
+    },
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+    },
+  },
 ];
