@@ -140,7 +140,7 @@ You can extract individual values using these paths:
 
 ### Important Notes
 
-⚠️ **Secret ID and the `#` Delimiter**: The `#` character is used as the delimiter for JSON path extraction. 
+⚠️ **Secret ID and the `#` Delimiter**: The `#` character is used as the delimiter for JSON path extraction.
 
 **Why this delimiter?** Using `#` in secret names is generally considered bad practice across vault systems (AWS Secrets Manager, GCP Secrets Manager, etc.), so it's unlikely to appear in real secret IDs. This makes it a safe choice for our delimiter.
 
@@ -155,11 +155,13 @@ You can extract individual values using these paths:
 ### Supported Value Types
 
 JSON path extraction supports extracting primitive values:
+
 - **Strings**: Returned as-is
 - **Numbers**: Converted to string representation
 - **Booleans**: Converted to string (`"true"` or `"false"`)
 
 **Not supported:**
+
 - Arrays
 - Objects (nested objects)
 - `null` values
@@ -229,6 +231,7 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](./LICE
 - **Yuval Sasson** - For pioneering the initiative to dynamically retrieve secrets for MCP servers
 - **Omer Alon** - For developing and releasing the MCP Secert Wrapper tool
 - **Oshri Shmuel** - For developing and releasing the MCP Secert Wrapper tool
+- **Neta Ravid** - For developing, releasing, and maintaining the MCP Secret Wrapper tool
 - **MCP Community** - For creating and maintaining the MCP framework
 
 ---

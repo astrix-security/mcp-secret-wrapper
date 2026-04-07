@@ -65,7 +65,7 @@ function parseCliArgs(args: string[]): [Record<string, string>, string[]] {
 function runMcpServer(
   command: string,
   args: string[],
-  env: Record<string, string>
+  env: Record<string, string>,
 ): void {
   const childProcess = spawn(command, args, {
     env: { ...process.env, ...env },
@@ -95,7 +95,7 @@ function validateJsonPath(jsonPath: string): void {
 
   if (jsonPath.startsWith(".") || jsonPath.endsWith(".")) {
     throw new Error(
-      `JSON path '${jsonPath}' cannot start or end with a dot. Use format like 'key.subkey'`
+      `JSON path '${jsonPath}' cannot start or end with a dot. Use format like 'key.subkey'`,
     );
   }
 
@@ -103,7 +103,7 @@ function validateJsonPath(jsonPath: string): void {
   const emptySegments = segments.filter((seg) => seg.length === 0);
   if (emptySegments.length > 0) {
     throw new Error(
-      `JSON path '${jsonPath}' contains empty segments. Use format like 'key.subkey' without consecutive dots`
+      `JSON path '${jsonPath}' contains empty segments. Use format like 'key.subkey' without consecutive dots`,
     );
   }
 }
@@ -128,7 +128,7 @@ function extractJsonPath(jsonString: string, jsonPath: string): string {
       // The user requested JSON path extraction (by including #), but secret isn't JSON
       throw new Error(
         `Cannot extract JSON path '${jsonPath}' from secret: secret value is not valid JSON. ` +
-        `If you did not intend to extract a JSON path, remove the '#${jsonPath}' suffix from the secret ID.`
+          `If you did not intend to extract a JSON path, remove the '#${jsonPath}' suffix from the secret ID.`,
       );
     }
     throw error;
@@ -143,7 +143,7 @@ function extractJsonPath(jsonString: string, jsonPath: string): string {
         : `a JSON primitive (${typeof parsed})`;
     throw new Error(
       `Cannot extract JSON path '${jsonPath}' from secret: secret value is ${valueType}, not a JSON object. ` +
-      `JSON path extraction requires a JSON object with key-value pairs.`
+        `JSON path extraction requires a JSON object with key-value pairs.`,
     );
   }
 
@@ -158,9 +158,7 @@ function extractJsonPath(jsonString: string, jsonPath: string): string {
 
     // Ensure current value is a plain object (not array, not null, not primitive)
     if (!value || typeof value !== "object" || Array.isArray(value)) {
-      const pathDescription = parentPath
-        ? `path '${parentPath}'`
-        : "top-level";
+      const pathDescription = parentPath ? `path '${parentPath}'` : "top-level";
       const valueType = Array.isArray(value)
         ? "an array"
         : value === null
@@ -168,7 +166,7 @@ function extractJsonPath(jsonString: string, jsonPath: string): string {
           : `a ${typeof value}`;
       throw new Error(
         `Cannot extract JSON path '${jsonPath}' from secret: value at ${pathDescription} is ${valueType}, not a plain object. ` +
-        `Cannot access property '${key}' on ${valueType}. JSON path extraction requires plain objects with key-value pairs.`
+          `Cannot access property '${key}' on ${valueType}. JSON path extraction requires plain objects with key-value pairs.`,
       );
     }
 
@@ -179,12 +177,10 @@ function extractJsonPath(jsonString: string, jsonPath: string): string {
     } else {
       // Provide context-appropriate error message
       const availableKeys = Object.keys(value as Record<string, unknown>);
-      const pathDescription = parentPath
-        ? `path '${parentPath}'`
-        : "top-level";
+      const pathDescription = parentPath ? `path '${parentPath}'` : "top-level";
       throw new Error(
         `Cannot extract JSON path '${jsonPath}' from secret: key '${key}' not found at ${pathDescription}. ` +
-        `Available keys: ${availableKeys.length > 0 ? availableKeys.join(", ") : "(none)"}`
+          `Available keys: ${availableKeys.length > 0 ? availableKeys.join(", ") : "(none)"}`,
       );
     }
   }
@@ -197,17 +193,17 @@ function extractJsonPath(jsonString: string, jsonPath: string): string {
   } else if (value === null) {
     throw new Error(
       `Cannot extract JSON path '${jsonPath}' from secret: value at path '${jsonPath}' is null. ` +
-      `Only non-null primitive values (string, number, boolean) can be extracted.`
+        `Only non-null primitive values (string, number, boolean) can be extracted.`,
     );
   } else if (Array.isArray(value)) {
     throw new Error(
       `Cannot extract JSON path '${jsonPath}' from secret: value at path '${jsonPath}' is an array. ` +
-      `Only primitive values (string, number, boolean) can be extracted, not arrays or objects.`
+        `Only primitive values (string, number, boolean) can be extracted, not arrays or objects.`,
     );
   } else {
     throw new Error(
       `Cannot extract JSON path '${jsonPath}' from secret: value at path '${jsonPath}' is an object. ` +
-      `Only primitive values (string, number, boolean) can be extracted, not objects or arrays.`
+        `Only primitive values (string, number, boolean) can be extracted, not objects or arrays.`,
     );
   }
 }
@@ -220,7 +216,7 @@ function extractJsonPath(jsonString: string, jsonPath: string): string {
  */
 async function getSecrets(
   envVars: Record<string, string>,
-  vault: VaultPlugin
+  vault: VaultPlugin,
 ): Promise<Record<string, string>> {
   const result: Record<string, string> = {};
 
@@ -242,7 +238,7 @@ async function getSecrets(
       if (jsonPath !== undefined && jsonPath.length === 0) {
         throw new Error(
           `Invalid secret ID format for ${key}: '${secretIdWithPath}'. ` +
-          `JSON path cannot be empty after '#' delimiter.`
+            `JSON path cannot be empty after '#' delimiter.`,
         );
       }
 
@@ -281,7 +277,7 @@ async function main(): Promise<void> {
 
     if (commandWithArgs.length === 0) {
       throw new Error(
-        "No command specified. Use format: mcp-secret [ENV_VAR=secret_key...] -- command [args...]"
+        "No command specified. Use format: mcp-secret [ENV_VAR=secret_key...] -- command [args...]",
       );
     }
 
@@ -294,7 +290,7 @@ async function main(): Promise<void> {
   } catch (error) {
     console.error(
       "Error:",
-      error instanceof Error ? error.message : String(error)
+      error instanceof Error ? error.message : String(error),
     );
     process.exit(1);
   }
