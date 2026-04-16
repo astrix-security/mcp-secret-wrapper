@@ -13,6 +13,7 @@ Complete guide for integrating with AWS Secrets Manager, including authenticatio
 Complete guide for integrating with GCP Secret Manager, including authentication, configuration, and best practices.
 
 ### [Azure Key Vault](./vaults/azure.md)
+
 Complete guide for integrating with Azure Key Vault, including authentication, configuration, and best practices.
 
 ## Quick Start
