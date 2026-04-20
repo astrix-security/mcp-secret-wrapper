@@ -33,7 +33,7 @@
     "url": "git+https://github.com/astrix-security/mcp-secret-wrapper.git"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=20.0.0"
   },
   "dependencies": {
     "@aws-sdk/client-secrets-manager": "^3.787.0",
