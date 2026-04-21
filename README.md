@@ -52,7 +52,7 @@ Convert any MCP Server configured for your client and uses a static secret in 2 
       "command": "npx",
       "args": [
         "-y",
-        "git+https://github.com/astrix-security/mcp-secret-wrapper",
+        "@astrixsecurity/mcp-secret-wrapper",
         "GITHUB_PERSONAL_ACCESS_TOKEN=arn:aws:secretsmanager:us-east-1:123456789012:secret:example-ABCDE",
         "--",
         "docker",
@@ -121,7 +121,7 @@ You can extract individual values using these paths:
       "command": "npx",
       "args": [
         "-y",
-        "git+https://github.com/astrix-security/mcp-secret-wrapper",
+        "@astrixsecurity/mcp-secret-wrapper",
         "DB_USERNAME=arn:aws:secretsmanager:us-east-1:123456789012:secret:my-db-config#db.credentials.username",
         "DB_PASSWORD=arn:aws:secretsmanager:us-east-1:123456789012:secret:my-db-config#db.credentials.password",
         "DB_HOST=arn:aws:secretsmanager:us-east-1:123456789012:secret:my-db-config#db.host",

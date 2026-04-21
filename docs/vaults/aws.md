@@ -49,7 +49,7 @@ The AWS plugin supports 5 optional configuration parameters. If not set, it uses
       "command": "npx",
       "args": [
         "-y",
-        "git+https://github.com/astrix-security/mcp-secret-wrapper", // TODO - Change
+        "@astrixsecurity/mcp-secret-wrapper",
         "--vault-profile=aws-profile",
         "--vault-type=aws",
         "--vault-region=us-east-1",
@@ -73,7 +73,7 @@ The AWS plugin supports 5 optional configuration parameters. If not set, it uses
       "command": "npx",
       "args": [
         "-y",
-        "git+https://github.com/astrix-security/mcp-secret-wrapper", // TODO - Change
+        "@astrixsecurity/mcp-secret-wrapper",
         "API_KEY=arn:aws:secretsmanager:us-east-1:123456789012:secret:api-key",
         "--",
         "npx",

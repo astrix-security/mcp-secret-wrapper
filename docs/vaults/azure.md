@@ -64,7 +64,7 @@ The Azure plugin supports 5 optional configuration parameters. At least one of `
       "command": "npx",
       "args": [
         "-y",
-        "git+https://github.com/astrix-security/mcp-secret-wrapper",
+        "@astrixsecurity/mcp-secret-wrapper",
         "--vault-type=azure",
         "--vault-vaultUrl=https://myvault.vault.azure.net",
         "API_KEY=my-api-key",
@@ -87,7 +87,7 @@ The Azure plugin supports 5 optional configuration parameters. At least one of `
       "command": "npx",
       "args": [
         "-y",
-        "git+https://github.com/astrix-security/mcp-secret-wrapper",
+        "@astrixsecurity/mcp-secret-wrapper",
         "API_KEY=my-api-key",
         "--",
         "npx",
@@ -112,7 +112,7 @@ The Azure plugin supports 5 optional configuration parameters. At least one of `
       "command": "npx",
       "args": [
         "-y",
-        "git+https://github.com/astrix-security/mcp-secret-wrapper",
+        "@astrixsecurity/mcp-secret-wrapper",
         "API_KEY=my-api-key",
         "--",
         "npx",

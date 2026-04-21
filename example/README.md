@@ -69,7 +69,7 @@ aws secretsmanager create-secret \
     "example-server-secure": {
       "command": "npx",
       "args": [
-        "git+https://github.com/astrix-security/mcp-secret-wrapper",
+        "@astrixsecurity/mcp-secret-wrapper",
         "--vault-type=aws",
         "--vault-region=us-east-1",
         "API_KEY=arn:aws:secretsmanager:us-east-1:123456789012:secret:example-mcp/api-key",
@@ -90,7 +90,7 @@ aws secretsmanager create-secret \
     "example-server-secure": {
       "command": "npx",
       "args": [
-        "git+https://github.com/astrix-security/mcp-secret-wrapper",
+        "@astrixsecurity/mcp-secret-wrapper",
         "API_KEY=arn:aws:secretsmanager:us-east-1:123456789012:secret:example-mcp/api-key",
         "--",
         "node",
