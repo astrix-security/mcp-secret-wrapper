@@ -13,7 +13,7 @@
     "dev": "ts-node --esm mcp-server.ts"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.26.0"
+    "@modelcontextprotocol/sdk": "^1.29.0"
   },
   "devDependencies": {
     "@types/node": "^20.4.5",
