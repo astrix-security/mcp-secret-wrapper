@@ -1,5 +1,5 @@
 <div align="center">
-<img src="https://public-astrix-bucket.s3.us-east-1.amazonaws.com/mcp-wrapper-banner.png" alt="MCP Secret Wrapper Logo" maxWidth="500px"/>
+<img src="https://public.astrixsecurity.com/mcp-wrapper-banner.png" alt="MCP Secret Wrapper Logo" maxWidth="500px"/>
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
